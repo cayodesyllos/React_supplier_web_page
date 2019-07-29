@@ -1,0 +1,134 @@
+*{
+  font-family: 'Open Sans', sans-serif !important;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.background-form {
+  background-color: white;
+  padding: 2% !important;
+  margin-top: 2%;
+  border-radius: 1%;
+  box-shadow: 2px 4px 4px 3px #ccc;
+}
+
+.row {
+  margin-top: 1%;
+}
+
+.row .label {
+  font-size: 16px;
+}
+.row .label_error {
+  font-size: 16px;
+  color: red;
+}
+
+.row .label_button_error {
+  color: red !important;
+  background-color: #ff000c66 !important;
+}
+
+.row .input {
+  margin-top: 4px;
+  background: #FFFFFF;
+  border: 1px solid #E2E2E2;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.row .select {
+  margin-top: 4px;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.ant-input:disabled{
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.backward {
+  margin-top: 2%;
+  float: left;
+  width: 146px!important;
+  height: 38px!important;
+  
+}
+
+.forward {
+  margin-top: 2%;
+  float: right;
+  width: 146px!important;
+  height: 38px !important;
+
+}
+
+.button {
+  background: #CF0072 !important;
+  box-shadow: 2px 2px 17px rgba(0, 0, 0, 0.07) !important;
+  border-radius: 25px !important;
+  text-align: center;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  font-size: 14px;
+  width: 384px;
+  height: 50px;
+  font-weight: 400 !important;
+  padding: 4px !important;
+  border: none !important;
+}
+
+.documentos {
+  width: 100%;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+  background:  #CF0072 !important;
+  border-color: #CF0072 !important;
+}
+
+.backward:hover, .forward:hover{
+  background: #B90066 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon {
+  border-color:  #B90066 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: #B90066 !important;
+}
+
+.invisible {
+  display: none;
+}
+
+.ant-spin-dot-item {
+  background-color: #CF0072 !important;
+}
+
+.ant-spin {
+  color: #CF0072 !important;
+}
+
+.tabs{
+  color: #CF0072 !important;
+}
+
+.ant-tabs-nav .ant-tabs-tab-active {
+  color: #B90066 !important;
+  font-size: 22px;
+}
+
+.alert {
+  margin-top: 2% !important;
+  margin-bottom: 2% !important;
+  font-size: 16px !important;
+}
+
+.ant-list-item-meta-title {
+  font-size: 20px !important;
+  font-weight: bolder !important;
+}
