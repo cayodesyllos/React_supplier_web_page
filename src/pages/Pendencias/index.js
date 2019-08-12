@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { Component } from 'react'
 import Pendencias from '../../Components/Pendencias';
+import { connect } from "react-redux";
 import './style.css';
 
-const PendenciasPage = () =>  
+class PendenciasPage extends Component { 
+    render() {
+        return (
+            <div>       
+                <h2 className="title">Pendências</h2>
+                <Pendencias acesso={this.props.login.grupo_acesso} /> 
+            </div>
+        )
+    }
+}
 
-    <div>       
-        <h2 className="title">Pendencias</h2>
-        <Pendencias acesso={'fiscal'} /> 
-    </div>
+const mapStateToProps = state => ({
+    login: state.login
+});
 
-export default PendenciasPage;
+export default connect(mapStateToProps)(PendenciasPage);

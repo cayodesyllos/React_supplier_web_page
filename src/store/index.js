@@ -1,6 +1,6 @@
 import { createStore, compose, applyMiddleware} from 'redux';
 import createSagaMiddleware from 'redux-saga';
-
+import thunk from 'redux-thunk';
 import sagas from './sagas'
 import reducers from './ducks'
 
@@ -10,6 +10,7 @@ const sagaMonitor = process.env.NODE_ENV === 'development' ? console.tron.create
 const sagaMiddleware = createSagaMiddleware({sagaMonitor});
 
 middlewares.push(sagaMiddleware);
+middlewares.push(thunk);
 
 const createAppropriateStore = process.env.NODE_ENV === 'development' ? console.tron.createStore : createStore;
 

@@ -1,5 +1,6 @@
 import { List, Tabs, Button} from 'antd';
 import React, { Component } from 'react'
+import { Route, Redirect } from 'react-router-dom';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Creators as FornecedoresActions} from '../store/ducks/fornecedores';
@@ -32,18 +33,18 @@ class Pendencias extends Component {
                 itemLayout="horizontal"
                 dataSource={this.props.fornecedores.data_gp}
                 renderItem={item => (
-                    this.props.acesso === 'gp' ?
-                    <List.Item actions={[<Button className="button forward" onClick={() => this.handleReprovar(item.cnpj)}>Reprovar</Button>, <Button className="button forward"><Link style={{ textDecoration: 'none' }}  
-                    to={{ pathname :'/', state: {fornecedor : this.props.fornecedores.data_gp.filter((elem) => elem.cnpj === item.cnpj)[0]}}}>Enriquecer</Link></Button>]}>
+                    this.props.acesso === 'gp' || this.props.acesso === 'admin' ?
+                    <List.Item actions={[<Button className="button forward" onClick={() => this.handleReprovar(item.cnpj)}>Reprovar</Button>, <Button  className="button forward"><Link style={{ textDecoration: 'none' }}  
+                    to={{ pathname :'/formulario', state: {tipo : 'gp', fornecedor : this.props.fornecedores.data_gp.filter((elem) => elem.cnpj === item.cnpj)[0]}}}>Enriquecer</Link></Button>]}>
                         <List.Item.Meta
                             title={item.nome_fantasia}
-                            description={Date(item.createdAt.split('T')[0])}
+                            description={(new Date(item.createdAt.split('T')[0]).getDate()).toString() + '/' + (new Date(item.createdAt.split('T')[0]).getMonth() + 1).toString() + '/' + new Date(item.createdAt.split('T')[0]).getFullYear().toString()}
                         />
                     </List.Item> :
                     <List.Item actions={[]}>
                     <List.Item.Meta
                         title={item.nome_fantasia}
-                        description={Date(item.createdAt.split('T')[0])}
+                        description={(new Date(item.createdAt.split('T')[0]).getDate()).toString() + '/' + (new Date(item.createdAt.split('T')[0]).getMonth() + 1).toString() + '/' + new Date(item.createdAt.split('T')[0]).getFullYear().toString()}
                     />
                     </List.Item>
                 )}
@@ -55,18 +56,18 @@ class Pendencias extends Component {
                 itemLayout="horizontal"
                 dataSource={this.props.fornecedores.data_fiscal}
                 renderItem={item => (
-                    this.props.acesso === 'fiscal' ?
-                    <List.Item actions={[ <Button className="button forward"><Link style={{ textDecoration: 'none' }}  
-                    to={{ pathname :'/', state: {fornecedor : this.props.fornecedores.data_fiscal.filter((elem) => elem.cnpj === item.cnpj)[0]}}}>Verificar</Link></Button>]}>
+                    this.props.acesso === 'fiscal'  || this.props.acesso === 'admin' ?
+                    <List.Item actions={[ <Button  className="button forward"><Link style={{ textDecoration: 'none' }}  
+                    to={{ pathname :'/formulario', state: {tipo : 'fiscal', fornecedor : this.props.fornecedores.data_fiscal.filter((elem) => elem.cnpj === item.cnpj)[0]}}}>Verificar</Link></Button>]}>
                         <List.Item.Meta
                             title={item.nome_fantasia}
-                            description={Date(item.createdAt.split('T')[0])}
+                            description={(new Date(item.updatedAt.split('T')[0]).getDate()).toString() + '/' + (new Date(item.updatedAt.split('T')[0]).getMonth() + 1).toString() + '/' + new Date(item.updatedAt.split('T')[0]).getFullYear().toString()}
                         />
                     </List.Item> : 
                     <List.Item actions={[]}>
                     <List.Item.Meta
                         title={item.nome_fantasia}
-                        description={Date(item.createdAt.split('T')[0])}
+                        description={(new Date(item.updatedAt.split('T')[0]).getDate()).toString() + '/' + (new Date(item.updatedAt.split('T')[0]).getMonth() + 1).toString() + '/' + new Date(item.updatedAt.split('T')[0]).getFullYear().toString()}
                     />
                     </List.Item>
                 )}
@@ -81,7 +82,7 @@ class Pendencias extends Component {
                 <List.Item actions={[]}>
                     <List.Item.Meta
                         title={item.nome_fantasia}
-                        description={Date(item.createdAt.split('T')[0])}
+                        description={(new Date(item.updatedAt.split('T')[0]).getDate()).toString() + '/' + (new Date(item.updatedAt.split('T')[0]).getMonth() + 1).toString() + '/' + new Date(item.updatedAt.split('T')[0]).getFullYear().toString()}
                     />
                 </List.Item>
                 )}

@@ -14,6 +14,9 @@ import InputMask from 'react-input-mask';
 import { file } from '@babel/types';
 import Loading from './Loading';
 import { withRouter } from 'react-router-dom' 
+import { Route, Redirect } from 'react-router-dom';
+import api from '../services/api';
+import apiAddress from '../services/apiAddress';
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -114,7 +117,7 @@ class CadastroFornecedor extends Component {
         prazo_entrega : null,
         prazo_entrega_error : false,
 
-        valor_minimo_pedido : 9,
+        valor_minimo_pedido : null,
         valor_minimo_pedido_error : false,
 
         frete : "CIF",
@@ -122,6 +125,10 @@ class CadastroFornecedor extends Component {
 
         //step 3
         certificados : false,
+        //contratos_dowload
+        certificados_download : [],
+        certificados_downloaded : false,
+        //
 
         possui_certificado_qualidade : false,
         certificado_qualidade_name : '',
@@ -139,7 +146,7 @@ class CadastroFornecedor extends Component {
         certificado_policia_civil_error : false,
 
         possui_certificado_bombeiros : false,
-        certificado_bomberios_name : '',
+        certificado_bombeiros_name : '',
         certificado_bombeiros : '',
         certificado_bombeiros_error : false,
 
@@ -171,6 +178,11 @@ class CadastroFornecedor extends Component {
 
         //step 4
 
+        //contratos_dowload
+        documentos_download : [],
+        documentos_downloaded : false,
+        //
+
         estatuto_social : '',
         estatuto_social_name : '',
         
@@ -193,6 +205,7 @@ class CadastroFornecedor extends Component {
         //step 5
 
         grupo_economico : '',
+        loaded_economic_group : false,
         grupo_economico_error : '',
         has_grupo_economico : false,
 
@@ -218,6 +231,11 @@ class CadastroFornecedor extends Component {
     
 
         //step 6
+
+        //contratos_dowload
+        contratos_download : [],
+        contratos_downloaded : false,
+        //
 
         contrato : '',
         contrato_name : '',
@@ -250,71 +268,147 @@ class CadastroFornecedor extends Component {
 
    
     async componentDidMount() {
-       
-        console.tron.log('!!!!!', this.props.location.state.fornecedor.endereco, this.props.location.state.fornecedor.endereco.split(',')[1])
-        await this.setState({
-            gp : this.props.location.state.fornecedor.gp,
-            razao_social : this.props.location.state.fornecedor.razao_social,
-            nome_fantasia : this.props.location.state.fornecedor.nome_fantasia,
-            numero: parseFloat(this.props.location.state.fornecedor.endereco.split(',')[1]),
-            cep: this.props.location.state.fornecedor.cep,
-            telefone: this.props.location.state.fornecedor.telefone,
-            celular: this.props.location.state.fornecedor.celular,
-            site: this.props.location.state.fornecedor.site,
-            email: this.props.location.state.fornecedor.email,
-            nome_responsavel_recebimento: this.props.location.state.fornecedor.nome_responsavel_recebimento,
-            email_responsavel_recebimento: this.props.location.state.fornecedor.email_responsavel_recebimento,
-            telefone_responsavel_recebimento: this.props.location.state.fornecedor.telefone_responsavel_recebimento,
-            cnpj: this.props.location.state.fornecedor.cnpj,
-            setor_industrial: this.props.location.state.fornecedor.setor_industrial,
-            regime_tributario: this.props.location.state.fornecedor.regime_tributario,
-            codigo_banco: this.props.location.state.fornecedor.codigo_banco,
-            agencia: this.props.location.state.fornecedor.agencia,
-            conta: this.props.location.state.fornecedor.conta,
-            prazo_pagamento: this.props.location.state.fornecedor.prazo_pagamento,
-            forma_pagamento: this.props.location.state.fornecedor.forma_pagamento,
-            prazo_entrega: this.props.location.state.fornecedor.prazo_entrega,
-            valor_minimo_pedido: this.props.location.state.fornecedor.valor_minimo_pedido,
-            frete: this.props.location.state.fornecedor.frete,
-            nome_contato_comercial: this.props.location.state.fornecedor.nome_contato_comercial,
-            email_contato_comercial: this.props.location.state.fornecedor.email_contato_comercial,
-            cargo_contato_comercial: this.props.location.state.fornecedor.cargo_contato_comercial,
-            telefone_contato_comercial: this.props.location.state.fornecedor.telefone_contato_comercial,
+        await this.props.bancosActions.getBancosRequest();   
+        if(this.props.acesso !== ''){
 
-        });
+            console.tron.log('------>>>>', this.state);
+              
+            await this.props.gruposEconomicosActions.getGruposEconomicosRequest(); 
+            
 
-        if(this.props.acesso === 'fiscal'){
-            this.setState({
-                taxa_antecipacao : this.props.location.state.fornecedor.taxa_antecipacao,
-                pedido_enxoval : this.props.location.state.fornecedor.pedido_enxoval,
-                pedido_espelho : this.props.location.state.fornecedor.pedido_espelho,
-                pedido_exposicao : this.props.location.state.fornecedor.pedido_exposicao,
-                teto_pedido_enxoval : this.props.location.state.fornecedor.teto_pedido_enxoval,
-                duracao_contrato : this.props.location.state.fornecedor.duracao_contrato,
-                desconto_abertura : this.props.location.state.fornecedor.desconto_abertura,
+            console.tron.log('!!!!!', this.props.location.state.fornecedor.endereco, this.props.location.state.fornecedor.endereco.split(',')[1])
+            await this.setState({
+                gp : this.props.location.state.fornecedor.gp,
+                razao_social : this.props.location.state.fornecedor.razao_social,
+                nome_fantasia : this.props.location.state.fornecedor.nome_fantasia,
+                numero: parseFloat(this.props.location.state.fornecedor.endereco.split(',')[1]),
+                cep: this.props.location.state.fornecedor.cep,
+                telefone: this.props.location.state.fornecedor.telefone,
+                celular: this.props.location.state.fornecedor.celular,
+                site: this.props.location.state.fornecedor.site,
+                email: this.props.location.state.fornecedor.email,
+                nome_responsavel_recebimento: this.props.location.state.fornecedor.nome_responsavel_recebimento,
+                email_responsavel_recebimento: this.props.location.state.fornecedor.email_responsavel_recebimento,
+                telefone_responsavel_recebimento: this.props.location.state.fornecedor.telefone_responsavel_recebimento,
+                cnpj: this.props.location.state.fornecedor.cnpj,
+                setor_industrial: this.props.location.state.fornecedor.setor_industrial,
+                regime_tributario: this.props.location.state.fornecedor.regime_tributario,
+                codigo_banco: this.props.location.state.fornecedor.codigo_banco,
+                agencia: this.props.location.state.fornecedor.agencia,
+                conta: this.props.location.state.fornecedor.conta,
+                prazo_pagamento: this.props.location.state.fornecedor.prazo_pagamento,
+                forma_pagamento: this.props.location.state.fornecedor.forma_pagamento,
+                prazo_entrega: this.props.location.state.fornecedor.prazo_entrega,
+                valor_minimo_pedido: this.props.location.state.fornecedor.valor_minimo_pedido,
+                frete: this.props.location.state.fornecedor.frete,
+                nome_contato_comercial: this.props.location.state.fornecedor.nome_contato_comercial,
+                email_contato_comercial: this.props.location.state.fornecedor.email_contato_comercial,
+                cargo_contato_comercial: this.props.location.state.fornecedor.cargo_contato_comercial,
+                telefone_contato_comercial: this.props.location.state.fornecedor.telefone_contato_comercial,
             });
+
+            await this.handleGetAdress();
+
+            if(this.props.acesso === 'fiscal' || (this.props.acesso === 'admin' && this.props.location.state.tipo === 'fiscal')){
+
+
+                this.setState({
+                    grupo_economico : this.props.location.state.fornecedor.grupo_economico,
+                    has_grupo_economico : true,
+                    status_contrato : this.props.location.state.fornecedor.status_contrato,
+                    taxa_antecipacao : this.props.location.state.fornecedor.taxa_antecipacao,
+                    pedido_enxoval : this.props.location.state.fornecedor.pedido_enxoval,
+                    pedido_espelho : this.props.location.state.fornecedor.pedido_espelho,
+                    pedido_exposicao : this.props.location.state.fornecedor.pedido_exposicao,
+                    teto_pedido_enxoval : this.props.location.state.fornecedor.teto_pedido_enxoval,
+                    duracao_contrato : this.props.location.state.fornecedor.duracao_contrato,
+                    desconto_abertura : this.props.location.state.fornecedor.desconto_abertura,
+                });
+                
+                
+            }
+            
         }
 
-        await this.handleGetAdress();
+        
 
-        console.tron.log('------>>>>', this.state);
-        this.props.bancosActions.getBancosRequest();     
-        this.props.gruposEconomicosActions.getGruposEconomicosRequest(); 
+
+        
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+
+        if(this.state.step === 3 && this.state.certificados_downloaded === false){
+            this.handleShowCertificados();
+            this.setState({certificados_downloaded : true});
+        }
+        
+        else if(this.state.step === 4 && this.state.documentos_downloaded === false){
+            this.handleShowDocumentos();
+            this.setState({documentos_downloaded : true});
+        }
+
+        else if(this.state.step === 5 && this.state.loaded_economic_group === false &&
+             (this.props.acesso === 'fiscal' || (this.props.acesso === 'admin' && this.props.location.state.tipo === 'fiscal'))){
+            this.props.grupos_economicos.data.filter((elem) =>
+            {
+                console.tron.log(elem)
+                if(elem.nome === this.state.grupo_economico) {
+                    this.setState({supplier_leroy : elem.fornecedor_leroy, rappel_faixa_1 : elem.rappel_faixa_1, rappel_faixa_2 : elem.rappel_faixa_2, rappel_faixa_3 : elem.rappel_faixa_3, rappel_faixa_4 : elem.rappel_faixa_4, rappel_desconto_1 : elem.rappel_desconto_1, rappel_desconto_2 : elem.rappel_desconto_2, rappel_desconto_3 : elem.rappel_desconto_3, rappel_desconto_4 : elem.rappel_desconto_4}) ;
+                }
+                this.setState({loaded_economic_group : true});
+            });
+        }        
+
+        else if(this.state.step === 6 && this.state.contratos_downloaded === false){
+            this.handleShowContrato();
+            this.setState({contratos_downloaded : true});
+        }
+
+        ///////
+
         if(prevProps != this.props){
-            console.tron.log('*********')
+
             if (this.props.fornecedores.error === true && this.props.fornecedores.loading === false) {            
                 this.setState({fail : true});
                 setTimeout(() => {this.setState({fail : false})}, 3000);
             }
             else if(this.props.fornecedores.error === 'done' && this.props.fornecedores.loading === false){
-                // redirect to instructions page (email when aproved...)
-                console.tron.log('great!!')
+                if(this.props.acesso !== '')
+                    this.props.history.push('/pendencias')
+                else
+                    this.props.history.push('/aguarde')
             }
         }
     }
+
+    handleShowContrato = async () => { 
+        let contratos = await api.get(`/contratos/${this.state.cnpj}`);
+        
+        await this.setState({
+        contratos_download: contratos.data.files,
+        });
+    }
+
+    handleShowDocumentos = async () => { 
+        let documentos = await api.get(`/documentos/${this.state.cnpj}`);
+        console.tron.log('documentosssss');
+        await this.setState({
+        documentos_download: documentos.data.files,
+        });
+    }
+
+    handleShowCertificados = async () => { 
+        let certificados = await api.get(`/certificados/${this.state.cnpj}`);
+        console.tron.log('certificadosssss');
+        await this.setState({
+        certificados_download: certificados.data.files,
+        });
+    }
+
+    handleSelectContrato = async item => {
+        window.open(`${apiAddress}/contratos_download/${item.toString()}`);
+      };
 
     handleGetCep = async (e) => {
         await this.setState({cep : e.target.value});
@@ -327,47 +421,18 @@ class CadastroFornecedor extends Component {
     handleForward = async () => {
         let limit = 7;
 
-        if(this.props.acesso === 'fornecedor')
+        if(this.props.acesso === '')
             limit = 4;
 
         if(this.state.step < limit){
-            if(this.props.acesso == 'gp'){
-                if(this.state.step === 2){
-                    let step_gp = this.state.step + 3;
-                    await this.setState({step : step_gp});
-                }
-                else{
-                    let success = await this.handleCheckFields(this.state.step);
-                    console.tron.log(success, '######()')
-                    if(success === true){
-                        let step = this.state.step + 1;
-                        await this.setState({step : step});
-                    }
-                }
+            
+            let success = await this.handleCheckFields(this.state.step);
+            console.tron.log(success, '######()')
+            if(success === true){
+                let step = this.state.step + 1;
+                await this.setState({step : step});
             }
-            else if(this.props.acesso == 'fiscal'){
-                if(this.state.step === 2){
-                    let step_gp = this.state.step + 5;
-                    await this.setState({step : step_gp});
-                }
-                else{
-                    let success = await this.handleCheckFields(this.state.step);
-                    console.tron.log(success, '######()')
-                    if(success === true){
-                        let step = this.state.step + 1;
-                        await this.setState({step : step});
-                    }
-                }
-
-            }
-            else{
-                let success = await this.handleCheckFields(this.state.step);
-                console.tron.log(success, '######()')
-                if(success === true){
-                    let step = this.state.step + 1;
-                    await this.setState({step : step});
-                }
-            }
+            
         }
         else{
             let success = await this.handleCheckFields(this.state.step);
@@ -377,28 +442,7 @@ class CadastroFornecedor extends Component {
     }
 
     handleBackward = async () => {
-        if(this.props.acesso == 'gp'){
-            if(this.state.step === 5){
-                let step_gp = this.state.step - 3;
-                await this.setState({step : step_gp});
-            }
-            else{
-                let step = this.state.step - 1;
-                await this.setState({step : step});
-            }
-        }
-        else if(this.props.acesso == 'fiscal'){
-            if(this.state.step === 6){
-                let step_gp = this.state.step - 5;
-                await this.setState({step : step_gp});
-            }
-            else{
-                let step = this.state.step - 1;
-                await this.setState({step : step});
-            }
-
-        }
-        else if(this.state.step > 0){
+        if(this.state.step > 0){
             let step = this.state.step - 1;
             await this.setState({step : step});
         }
@@ -406,7 +450,7 @@ class CadastroFornecedor extends Component {
     
 
     handleSubmit = async () => {    
-        if(this.props.acesso === 'fornecedor'){
+        if(this.props.acesso === ''){
             let fornecedor = {
                 gp : this.state.gp,
                 razao_social : this.state.razao_social,
@@ -438,24 +482,52 @@ class CadastroFornecedor extends Component {
                 email_contato_comercial : this.state.email_contato_comercial,
                 cargo_contato_comercial : this.state.cargo_contato_comercial,
                 telefone_contato_comercial : this.state.telefone_contato_comercial,
+                
                 certificado_qualidade : this.state.certificado_qualidade,
+                certificado_qualidade_name : this.state.certificado_qualidade_name,
+
                 certificado_ibama : this.state.certificado_ibama,
+                certificado_ibama_name : this.state.certificado_ibama_name,
+                
                 certificado_policia_civil : this.state.certificado_policia_civil,
+                certificado_policia_civil_name : this.state.certificado_policia_civil_name,
+                
                 certificado_bombeiros : this.state.certificado_bombeiros,
+                certificado_bombeiros_name : this.state.certificado_bombeiros_name,
+                
                 certificado_policia_federal : this.state.certificado_policia_federal,
+                certificado_policia_federal_name : this.state.certificado_policia_federal_name,
+                
                 certificado_exercito : this.state.certificado_exercito,
+                certificado_exercito_name : this.state.certificado_exercito_name,
+                
                 certificado_inmetro : this.state.certificado_inmetro,
+                certificado_inmetro_name : this.state.certificado_inmetro_name,
+                
                 certificado_anvisa : this.state.certificado_anvisa,
+                certificado_anvisa_name : this.state.certificado_anvisa_name,
+                
                 certificado_mapa : this.state.certificado_mapa,
+                certificado_mapa_name : this.state.certificado_mapa_name,
+                
                 contrato_estatuto_social : this.state.estatuto_social,
+                contrato_estatuto_social_name : this.state.estatuto_social_name,
+                
                 cartao_cnpj : this.state.cartao_cnpj,
+                cartao_cnpj_name : this.state.cartao_cnpj_name,
+                
                 procuracao : this.state.procuracao,
+                procuracao_name : this.state.procuracao_name,
+                
                 comprovante_bancario : this.state.comprovante_bancario,
+                comprovante_bancario_name : this.state.comprovante_bancario_name,
+                
                 certidao_falencia_concordata : this.state.falencia_concordata,
+                certidao_falencia_concordata_name : this.state.falencia_concordata_name,
             }
             this.props.fornecedoresActions.addFornecedoresRequest(fornecedor);
         }
-        else if(this.props.acesso === 'gp'){
+        else if(this.props.acesso === 'gp' || (this.props.acesso === 'admin' && this.props.location.state.tipo === 'gp')){
 
             if(!this.state.has_grupo_economico){
                 let rappel = {
@@ -473,6 +545,57 @@ class CadastroFornecedor extends Component {
                 
                 this.props.gruposEconomicosActions.addGruposEconomicosRequest(rappel);
             }
+
+            let fornecedor = {
+            gp : this.state.gp,
+            razao_social : this.state.razao_social,
+            nome_fantasia : this.state.nome_fantasia,
+            endereco :  this.state.endereco + ',' + this.state.numero,
+            bairro : this.state.bairro,
+            cidade : this.state.cidade,
+            estado : this.state.estado,
+            cep : this.state.cep,
+            telefone : this.state.telefone,
+            celular : this.state.celular,
+            site : this.state.site,
+            email : this.state.email,
+            nome_responsavel_recebimento : this.state.nome_responsavel_recebimento,
+            email_responsavel_recebimento : this.state.email_responsavel_recebimento,
+            telefone_responsavel_recebimento : this.state.telefone_responsavel_recebimento,
+            cnpj : this.state.cnpj,
+            setor_industrial : this.state.setor_industrial,
+            regime_tributario : this.state.regime_tributario,
+            codigo_banco : this.state.codigo_banco.toString(),
+            agencia : this.state.agencia,
+            conta : this.state.conta,
+            prazo_pagamento : this.state.prazo_pagamento,
+            forma_pagamento : this.state.forma_pagamento,
+            prazo_entrega : this.state.prazo_entrega,
+            valor_minimo_pedido : this.state.valor_minimo_pedido,
+            frete : this.state.frete,
+            nome_contato_comercial : this.state.nome_contato_comercial,
+            email_contato_comercial : this.state.email_contato_comercial,
+            cargo_contato_comercial : this.state.cargo_contato_comercial,
+            telefone_contato_comercial : this.state.telefone_contato_comercial,                
+            grupo_economico : this.state.grupo_economico,
+            contrato : this.state.contrato,
+            contrato_name : this.state.contrato_name,
+            status_contrato : this.state.status_contrato,
+            taxa_antecipacao : this.state.taxa_antecipacao,
+            pedido_enxoval : this.state.pedido_enxoval,
+            pedido_espelho : this.state.pedido_espelho,
+            pedido_exposicao : this.state.pedido_exposicao,
+            teto_pedido_enxoval : this.state.teto_pedido_enxoval,
+            duracao_contrato : this.state.duracao_contrato,
+            desconto_abertura : this.state.desconto_abertura,        
+            pendencia : 'gp',
+            };
+            // console.tron.log(this.state.contrato);
+            this.props.fornecedoresActions.updateFornecedoresRequest(fornecedor);
+        }
+
+
+        else if(this.props.acesso === 'fiscal' || (this.props.acesso === 'admin' && this.props.location.state.tipo === 'fiscal')){
 
             let fornecedor = {
                 gp : this.state.gp,
@@ -506,7 +629,6 @@ class CadastroFornecedor extends Component {
                 cargo_contato_comercial : this.state.cargo_contato_comercial,
                 telefone_contato_comercial : this.state.telefone_contato_comercial,                
                 grupo_economico : this.state.grupo_economico,
-                contrato : this.state.contrato,
                 status_contrato : this.state.status_contrato,
                 taxa_antecipacao : this.state.taxa_antecipacao,
                 pedido_enxoval : this.state.pedido_enxoval,
@@ -515,54 +637,8 @@ class CadastroFornecedor extends Component {
                 teto_pedido_enxoval : this.state.teto_pedido_enxoval,
                 duracao_contrato : this.state.duracao_contrato,
                 desconto_abertura : this.state.desconto_abertura,        
-                pendencia : 'gp',
-            }
-            this.props.fornecedoresActions.updateFornecedoresRequest(fornecedor);
-        }
-
-
-        else if(this.props.acesso === 'fiscal'){
-
-            let fornecedor = {
-                gp : this.state.gp,
-                razao_social : this.state.razao_social,
-                nome_fantasia : this.state.nome_fantasia,
-                endereco :  this.state.endereco + ',' + this.state.numero,
-                bairro : this.state.bairro,
-                cidade : this.state.cidade,
-                estado : this.state.estado,
-                cep : this.state.cep,
-                telefone : this.state.telefone,
-                celular : this.state.celular,
-                site : this.state.site,
-                email : this.state.email,
-                nome_responsavel_recebimento : this.state.nome_responsavel_recebimento,
-                email_responsavel_recebimento : this.state.email_responsavel_recebimento,
-                telefone_responsavel_recebimento : this.state.telefone_responsavel_recebimento,
-                cnpj : this.state.cnpj,
-                setor_industrial : this.state.setor_industrial,
-                regime_tributario : this.state.regime_tributario,
-                codigo_banco : this.state.codigo_banco.toString(),
-                agencia : this.state.agencia,
-                conta : this.state.conta,
-                prazo_pagamento : this.state.prazo_pagamento,
-                forma_pagamento : this.state.forma_pagamento,
-                prazo_entrega : this.state.prazo_entrega,
-                valor_minimo_pedido : this.state.valor_minimo_pedido,
-                frete : this.state.frete,
-                nome_contato_comercial : this.state.nome_contato_comercial,
-                email_contato_comercial : this.state.email_contato_comercial,
-                cargo_contato_comercial : this.state.cargo_contato_comercial,
-                telefone_contato_comercial : this.state.telefone_contato_comercial,                
-                taxa_antecipacao : this.state.taxa_antecipacao,
-                pedido_enxoval : this.state.pedido_enxoval,
-                pedido_espelho : this.state.pedido_espelho,
-                pedido_exposicao : this.state.pedido_exposicao,
-                teto_pedido_enxoval : this.state.teto_pedido_enxoval,
-                duracao_contrato : this.state.duracao_contrato,
-                desconto_abertura : this.state.desconto_abertura,        
                 pendencia : 'fiscal',
-            }
+            };
             this.props.fornecedoresActions.updateFornecedoresRequest(fornecedor);
         }
 
@@ -615,7 +691,7 @@ class CadastroFornecedor extends Component {
             if(this.state.regime_tributario.length > 0){this.setState({regime_tributario_error : false});} else{this.setState({regime_tributario_error : true});success = false;}  
             if(this.state.codigo_banco != null){this.setState({codigo_banco_error : false});} else{this.setState({codigo_banco_error : true});success = false;}  
             if(this.state.agencia.length == 4){this.setState({agencia_error : false});} else{this.setState({agencia_error : true});success = false;}  
-            if(this.state.conta.length == 7){this.setState({conta_error : false});} else{this.setState({conta_error : true});success = false;}  
+            if(this.state.conta.length !== null){this.setState({conta_error : false});} else{this.setState({conta_error : true});success = false;}  
             // if(this.state.prazo_pagamento.length > 0){this.setState({prazo_pagamento_error : false});} else{this.setState({prazo_pagamento_error : true});success = false;}  
             // if(this.state.forma_pagamento.length > 0){this.setState({forma_pagamento_error : false});} else{this.setState({forma_pagamento_error : true});success = false;}  
             if(this.state.prazo_entrega != null && this.state.prazo_entrega > 0){this.setState({prazo_entrega_error : false});} else{this.setState({prazo_entrega_error : true});success = false;} 
@@ -629,68 +705,69 @@ class CadastroFornecedor extends Component {
 
         if(step === 3){
             let success = true;
-            
-            if(this.state.possui_certificado_qualidade === true){
-                if(this.state.certificado_qualidade.length > 0){this.setState({certificado_qualidade_error : false});} else{this.setState({certificado_qualidade_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_qualidade_error : false});
-            }
+            if(this.props.acesso === ''){
+                if(this.state.possui_certificado_qualidade === true){
+                    if(this.state.certificado_qualidade.length > 0){this.setState({certificado_qualidade_error : false});} else{this.setState({certificado_qualidade_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_qualidade_error : false});
+                }
 
-            if(this.state.possui_certificado_ibama === true){
-                if(this.state.certificado_ibama.length > 0){this.setState({certificado_ibama_error : false});} else{this.setState({certificado_ibama_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_ibama_error : false});
-            }
+                if(this.state.possui_certificado_ibama === true){
+                    if(this.state.certificado_ibama.length > 0){this.setState({certificado_ibama_error : false});} else{this.setState({certificado_ibama_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_ibama_error : false});
+                }
 
-            if(this.state.possui_certificado_policia_civil === true){
-                if(this.state.certificado_policia_civil.length > 0){this.setState({certificado_policia_civil_error : false});} else{this.setState({certificado_policia_civil_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_policia_civil_error : false});
-            }
+                if(this.state.possui_certificado_policia_civil === true){
+                    if(this.state.certificado_policia_civil.length > 0){this.setState({certificado_policia_civil_error : false});} else{this.setState({certificado_policia_civil_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_policia_civil_error : false});
+                }
 
-            if(this.state.possui_certificado_bombeiros === true){
-                if(this.state.certificado_bombeiros.length > 0){this.setState({certificado_bombeiros_error : false});} else{this.setState({certificado_bombeiros_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_bombeiros_error : false});
-            }
+                if(this.state.possui_certificado_bombeiros === true){
+                    if(this.state.certificado_bombeiros.length > 0){this.setState({certificado_bombeiros_error : false});} else{this.setState({certificado_bombeiros_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_bombeiros_error : false});
+                }
 
-            if(this.state.possui_certificado_policia_federal === true){
-                if(this.state.certificado_policia_federal.length > 0){this.setState({certificado_policia_federal_error : false});} else{this.setState({certificado_policia_federal_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_policia_federal_error : false});
-            }
-            
-            if(this.state.possui_certificado_exercito === true){
-                if(this.state.certificado_exercito.length > 0){this.setState({certificado_exercito_error : false});} else{this.setState({certificado_exercito_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_exercito_error : false});
-            }
+                if(this.state.possui_certificado_policia_federal === true){
+                    if(this.state.certificado_policia_federal.length > 0){this.setState({certificado_policia_federal_error : false});} else{this.setState({certificado_policia_federal_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_policia_federal_error : false});
+                }
+                
+                if(this.state.possui_certificado_exercito === true){
+                    if(this.state.certificado_exercito.length > 0){this.setState({certificado_exercito_error : false});} else{this.setState({certificado_exercito_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_exercito_error : false});
+                }
 
-            if(this.state.possui_certificado_anvisa === true){
-                if(this.state.certificado_anvisa.length > 0){this.setState({certificado_anvisa_error : false});} else{this.setState({certificado_anvisa_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_anvisa_error : false});
-            }
+                if(this.state.possui_certificado_anvisa === true){
+                    if(this.state.certificado_anvisa.length > 0){this.setState({certificado_anvisa_error : false});} else{this.setState({certificado_anvisa_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_anvisa_error : false});
+                }
 
-            if(this.state.possui_certificado_inmetro === true){
-                if(this.state.certificado_inmetro.length > 0){this.setState({certificado_inmetro_error : false});} else{this.setState({certificado_inmetro_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_inmetro_error : false});
-            }
+                if(this.state.possui_certificado_inmetro === true){
+                    if(this.state.certificado_inmetro.length > 0){this.setState({certificado_inmetro_error : false});} else{this.setState({certificado_inmetro_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_inmetro_error : false});
+                }
 
-            if(this.state.possui_certificado_mapa === true){
-                if(this.state.certificado_mapa.length > 0){this.setState({certificado_mapa_error : false});} else{this.setState({certificado_mapa_error : true});success = false;}  
-            }
-            else{
-                this.setState({certificado_mapa_error : false});
+                if(this.state.possui_certificado_mapa === true){
+                    if(this.state.certificado_mapa.length > 0){this.setState({certificado_mapa_error : false});} else{this.setState({certificado_mapa_error : true});success = false;}  
+                }
+                else{
+                    this.setState({certificado_mapa_error : false});
+                }
             }
 
             return success;
@@ -698,11 +775,11 @@ class CadastroFornecedor extends Component {
 
         if(step === 4){
             let success = true;
-
-            if(this.state.cartao_cnpj.length > 0){this.setState({cartao_cnpj_error : false});} else{this.setState({cartao_cnpj_error : true});success = false;} 
-            if(this.state.comprovante_bancario.length > 0){this.setState({comprovante_bancario_error : false});} else{this.setState({comprovante_bancario_error : true});success = false;}   
-            if(this.state.falencia_concordata.length > 0){this.setState({falencia_concordata_error : false});} else{this.setState({falencia_concordata_error : true});success = false;}   
-            //success = true;
+            if(this.props.acesso === ''){
+                if(this.state.cartao_cnpj.length > 0){this.setState({cartao_cnpj_error : false});} else{this.setState({cartao_cnpj_error : true});success = false;} 
+                if(this.state.comprovante_bancario.length > 0){this.setState({comprovante_bancario_error : false});} else{this.setState({comprovante_bancario_error : true});success = false;}   
+                if(this.state.falencia_concordata.length > 0){this.setState({falencia_concordata_error : false});} else{this.setState({falencia_concordata_error : true});success = false;}   
+            }
             return success;
         }
 
@@ -740,11 +817,10 @@ class CadastroFornecedor extends Component {
 
         if(step === 6){
             let success = true;
-
-            if(this.state.contrato.length > 0 || this.state.status_contrato === 'SEM CONTRATO'){this.setState({contrato_error : false});} else{this.setState({contrato_error : true});success = false;}
-            if(this.state.status_contrato.length > 0){this.setState({status_contrato_error : false});} else{this.setState({status_contrato_error : true});success = false;}
-            
-            //success = true;
+            if(this.props.acesso === 'gp' || (this.props.acesso === 'admin' && this.props.location.state.tipo === 'gp')){
+                if(this.state.contrato.length > 0 || this.state.status_contrato === 'SEM CONTRATO'){this.setState({contrato_error : false});} else{this.setState({contrato_error : true});success = false;}
+                if(this.state.status_contrato.length > 0){this.setState({status_contrato_error : false});} else{this.setState({status_contrato_error : true});success = false;}
+            }
             return success;
         }
 
@@ -838,11 +914,11 @@ class CadastroFornecedor extends Component {
                     <Step title="Financeiro        "/>
                     <Step title="Certificados      "/>
                     <Step title="Documentos        "/>
-                    {this.props.acesso != 'fornecedor' ?
+                    {this.props.acesso != '' ?
                     <Step title="Rappel      "/> : ''}
-                    {this.props.acesso != 'fornecedor' ?
+                    {this.props.acesso != '' ?
                     <Step title="Contrato           "/> : ''}
-                    {this.props.acesso != 'fornecedor' ?
+                    {this.props.acesso != '' ?
                     <Step title="Inauguração        "/> : ''}
                 </Steps>
 
@@ -863,7 +939,7 @@ class CadastroFornecedor extends Component {
                             <Col span={2}></Col>
                             <Col span={11}>      
                             <label className={this.state.cnpj_error ? 'label_error' : 'label'} >CNPJ {this.state.cnpj_error ? ' *' : ''}</label>
-                                <InputMask disabled={this.props.acesso === 'fornecedor' ? false : true} value={this.state.cnpj} onChange={(e) => { this.setState({cnpj : e.target.value})}} className="ant-input input" {...this.props} mask="99.999.999/9999-99" maskChar=" " />                           
+                                <InputMask disabled={this.props.acesso === '' ? false : true} value={this.state.cnpj} onChange={(e) => { this.setState({cnpj : e.target.value})}} className="ant-input input" {...this.props} mask="99.999.999/9999-99" maskChar=" " />                           
                             </Col>
                         </Row>
                         <Row className="row">
@@ -1027,7 +1103,7 @@ class CadastroFornecedor extends Component {
                             <Col span={1}></Col>
                             <Col span={7}>
                                 <label className={this.state.conta_error ? 'label_error' : 'label'} >Conta{this.state.conta_error ? ' *' : ''}</label>
-                                <InputMask  value={this.state.conta} onChange={(e) => { this.setState({conta : e.target.value})}} className="ant-input input" {...this.props} mask="99999-9" maskChar=" " />                           
+                                <InputMask  value={this.state.conta} onChange={(e) => { this.setState({conta : e.target.value})}} className="ant-input input" {...this.props} mask="99999999999" maskChar=" " />                           
                             </Col>  
                         </Row>
                         <Row className="row">
@@ -1063,7 +1139,30 @@ class CadastroFornecedor extends Component {
 
                  {/* Certificados */}
 
-                 {this.state.step === 3 ?
+                 {this.state.step === 3 ? (this.props.acesso !== '') ?
+
+                    <div className="background-form">
+                        <Row className="row">
+                            <Col span={24}>
+                                {this.state.certificados_download.map(item => (
+                                    <Row>
+                                        <br />
+                                        <Col span={8}></Col>
+                                        <Col span={8}>
+                                            <Button className="button" onClick={() => this.handleSelectContrato(item)}>
+                                                {item}
+                                            </Button>
+                                        </Col>                                        
+                                        <Col span={8}></Col>
+                                        <br />
+                                    </Row>
+                                ))}
+                            </Col>
+                        </Row>
+                    </div>
+
+                    :
+
                     <div className="background-form">
                         <Checkbox checked={this.state.certificados}  onChange={(e) => { this.setState({certificados : e.target.checked})}}>FORNECE PRODUTOS CONTROLADOS, NORMATIZADOS, CERTIFICADOS, QUÍMICOS, PERECÍVEIS OU PERIGOSOS?</Checkbox>
                         
@@ -1419,7 +1518,29 @@ class CadastroFornecedor extends Component {
                 : ''}
 
                 {
-                    this.state.step === 4 ? 
+                    this.state.step === 4 ? (this.props.acesso !== '') ?
+
+                    <div className="background-form">
+                        <Row className="row">
+                            <Col span={24}>
+                                {this.state.documentos_download.map(item => (
+                                    <Row>
+                                        <br />
+                                        <Col span={8}></Col>
+                                        <Col span={8}>
+                                            <Button className="button" onClick={() => this.handleSelectContrato(item)}>
+                                                {item}
+                                            </Button>
+                                        </Col>                                        
+                                        <Col span={8}></Col>
+                                        <br />
+                                    </Row>
+                                ))}
+                            </Col>
+                        </Row>
+                    </div>
+
+                    :
                     
                     <div className="background-form">
                         <Row className="row">
@@ -1650,12 +1771,40 @@ class CadastroFornecedor extends Component {
                     
                 : ''}
 
-                {this.state.step === 6 ? 
-                    
+                {this.state.step === 6 ? (this.props.acesso === 'admin' && this.props.location.state.tipo === 'fiscal' || this.props.acesso === 'fiscal') ?
+
+                    <div className="background-form">
+                        <Row className="row">
+                            <Col span={10}>
+                                {/* <Button onClick={this.handleShowContrato}></Button> */}
+                                {this.state.contratos_download.map(item => (
+                                    <Row>
+                                    <br />
+                                    <Button className="button" onClick={() => this.handleSelectContrato(item)}>
+                                        {item}
+                                    </Button>
+                                    <br />
+                                    </Row>
+                                ))}
+                            </Col>
+                            <Col span={4}></Col>
+                            <Col span={10}>
+                                <label className={this.state.status_contrato_error ? 'label_error' : 'label'} >Status contrato{this.state.status_contrato_error ? ' *' : ''}</label>
+                                <Select  value={this.state.status_contrato} className="select" onChange={(e) => { this.setState({status_contrato : e})}}>
+                                    <Option value="CONTRATO COMPLETO">CONTRATO COMPLETO</Option>
+                                    <Option value="CONTRATO COM PROBLEMA">CONTRATO COM PROBLEMA</Option>
+                                    <Option value="CONTRATO SIMPLIFICADO">CONTRATO SIMPLIFICADO</Option>
+                                    <Option value="SEM CONTRATO">SEM CONTRATO</Option>
+                                </Select> 
+                            </Col>
+                        </Row>
+                    </div>
+                    :
                     <div className="background-form">
                         <Row className="row">
                             <Col span={10}>
                                 <div>
+                                    <br/>
                                     <input
                                     // accept="application/pdf"
                                     className="invisible"
@@ -1724,7 +1873,7 @@ class CadastroFornecedor extends Component {
                         </Row>
                         <Row className="row">
                             <Col span={10}>
-                                <label className={this.state.duracao_contrato_error ? 'label_error' : 'label'} >Duração contrato{this.state.duracao_contrato_error ? ' *' : ''}</label>
+                                <label className={this.state.duracao_contrato_error ? 'label_error' : 'label'} >Duração contrato (meses) {this.state.duracao_contrato_error ? ' *' : ''}</label>
                                 <InputMask  value={this.state.duracao_contrato} onChange={(e) => { this.setState({duracao_contrato : parseFloat(e.target.value)})}} className="ant-input input" {...this.props} mask="999" maskChar=" " />   
                             </Col>
                             <Col span={4}></Col>
@@ -1738,7 +1887,7 @@ class CadastroFornecedor extends Component {
                 : ''}
 
                 <Button onClick={this.handleBackward} className="backward button ">Voltar</Button>
-                <Button onClick={this.handleForward} className="forward button ">  {this.props.acesso === 'fornecedor' ? (this.state.step === 4 ? 'Finalizar' : 'Avançar') : (this.state.step === 7 ? 'Finalizar' : 'Avançar')} </Button>      
+                <Button onClick={this.handleForward} className="forward button ">  {this.props.acesso === '' ? (this.state.step === 4 ? 'Finalizar' : 'Avançar') : (this.state.step === 7 ? 'Finalizar' : 'Avançar')} </Button>      
 
             </div>
         );

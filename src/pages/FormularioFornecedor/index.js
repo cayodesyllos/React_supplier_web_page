@@ -1,12 +1,20 @@
-import React from 'react';
+
+import React, { Component } from 'react'
 import CadastroFornecedor from '../../Components/CadastroFornecedor';
 import './style.css';
 
-const CadastroFornecedorPage = () =>  
+class FormularioFornecedorPage extends Component { 
+    render() {
+        return (
 
     <div>       
         <h2 className="title">Formulário de cadastro</h2>
-        <CadastroFornecedor acesso={'fiscal'}/> 
-    </div>
+        <CadastroFornecedor acesso={''}/> 
+    </div>)
+    }
+}
 
-export default CadastroFornecedorPage;
+
+
+export default (FormularioFornecedorPage);
+  

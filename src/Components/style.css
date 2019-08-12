@@ -12,6 +12,18 @@
   box-shadow: 2px 4px 4px 3px #ccc;
 }
 
+
+.background-login {
+  width: 60%;
+  margin: auto;
+  background-color: white;
+  padding: 2% !important;
+  margin-top: 2%;
+  border-radius: 1%;
+  box-shadow: 2px 4px 4px 3px #ccc;
+  
+}
+
 .row {
   margin-top: 1%;
 }
@@ -78,6 +90,7 @@
   font-weight: 400 !important;
   padding: 4px !important;
   border: none !important;
+  width: 100%;
 }
 
 .documentos {
@@ -131,4 +144,21 @@
 .ant-list-item-meta-title {
   font-size: 20px !important;
   font-weight: bolder !important;
+}
+
+.login-button {
+  width: 20% !important;
+  margin-top: 4%;
+  height: 90px;
+}
+
+.cadastro-button {
+  width: 100% !important;
+  margin-top: 4%;
+  height: 90px;
+}
+
+.kep-login-facebook.metro {
+  border-radius: 0;
+  width: 100%;
 }

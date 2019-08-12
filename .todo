@@ -1,0 +1,33 @@
+✔ criar acessos gp e fiscal -> action -> success @done(19-08-05 14:42)
+✔ criar acessos admin @done(19-08-05 14:42)
+✔ redirect when logged and goes to Login @done(19-08-05 15:57)
+✔ corrigir bug datas de pendencia @done(19-08-05 15:12)
+✔ pegar nome e tipo de acesso e exibir na barra de menu @done(19-08-05 15:37)
+✔ consertar robo avs @done(19-08-05 15:38)
+✔ consertar relatorios nani @done(19-08-05 15:38)
+✔ avs @done(19-08-05 15:38)
+✔ carregamento de tela logout @done(19-08-05 15:57)
+✔ testes como gp, admin e fiscal @done(19-08-05 15:48)
+✔ drawer menu loading @done(19-08-05 16:50)
+✔ store hash instead of password @done(19-08-05 16:46)
+✔ depois de cadastrar (forn) -> tela de successo + instrucoes @done(19-08-06 16:08)
+✔ portal tela inicial -> interno @done(19-08-06 16:40)
+✔ salvar cnpj sem pontuacao @done(19-08-06 16:09)
+✔ fiscal puxar grupo economico @done(19-08-10 13:55)
+✔ inserir nomes na lista de acessos @done(19-08-10 13:55)
+✔ mostrar contratos para gp e fiscal @done(19-08-10 13:55)
+✔ grupo economico -> fiscal @done(19-08-10 23:22)
+✔ extensao arquivo @done(19-08-11 13:11)
+☐ criar aba negados
+☐ dps de enriquecer update pendentes ??
+
+☐ 360
+
+☐ estilizacao email
+
+☐ deploy continuos integration
+
+☐ alteracao cadastro
+☐ recup de senha
+
+✔ pedidos @done(19-08-06 16:09)

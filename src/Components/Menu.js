@@ -21,6 +21,12 @@ import MailIcon from '@material-ui/icons/Mail';
 import Routes from '../routes';
 import {Link} from 'react-router-dom';
 import {Icon} from 'antd';
+import {connect} from 'react-redux';
+import { Route, Redirect } from 'react-router-dom';
+
+import { bindActionCreators } from "redux";
+import { handleLogout } from "../store/ducks/login"
+import { Button } from '@material-ui/core';
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -108,19 +114,25 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <Toolbar disableGutters={!open}>
+            {this.props.login.logged ?
             <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerOpen}
-              className={classNames(classes.menuButton, open && classes.hide)}
+            color="inherit"
+            aria-label="Open drawer"
+            onClick={this.handleDrawerOpen}
+            className={classNames(classes.menuButton, open && classes.hide)}
             >
               <MenuIcon />
-            </IconButton>
-            <Typography variant="h5" color="inherit" noWrap>
-              Portal dos Fornecedores
+            </IconButton>:''}
+            
+            <Typography onClick={() => { window.location.href = '../portal/'}} variant="h5" style={{'margin-left': '1%', 'width': '50%'}} color="inherit" noWrap>
+             <Button style={{'backgroung-color': 'transparent', 'fontSize' : '20px'}} variant="h5" color="inherit" >Portal dos Fornecedores</Button> 
+            </Typography>
+            <Typography variant="h8" style={{'margin-right': '1%', 'width': '50%', 'text-align': 'right'}} color="inherit" noWrap>
+              {this.props.login.nome}   {this.props.login.grupo_acesso === 'gp' ? 'central de compras' : this.props.login.grupo_acesso}
             </Typography>
           </Toolbar>
         </AppBar>
+       
         <Drawer
           className={classes.drawer}
           variant="persistent"
@@ -136,6 +148,7 @@ class PersistentDrawerLeft extends React.Component {
             </IconButton>
           </div>
           <Divider />
+          {!this.props.login.loading ? 
           <List>
             {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
               <ListItem button key={text}>
@@ -143,20 +156,18 @@ class PersistentDrawerLeft extends React.Component {
                 <ListItemText primary={text} />
               </ListItem>
             ))} */}
-            <Link style={{ textDecoration: 'none' }} to={'/'}>
-                <ListItem button key={'CadastroFornecedor'}>
-                    <ListItemIcon>  <Icon type="reconciliation" /> </ListItemIcon>
-                    <ListItemText primary={'Cadastro Fornecedor'} />                
-                </ListItem>
-            </Link>
-            <Link style={{ textDecoration: 'none' }} to={'/pendencias'}>
-                <ListItem button key={'Pendencias'}>
-                    <ListItemIcon>  <Icon type="reconciliation" /> </ListItemIcon>
-                    <ListItemText primary={'Pendencias'} />                
-                </ListItem>
-            </Link>
+            {this.props.login.grupo_acesso != 'fornecedor' ?
+            <ListItem onClick={() => window.location.href = '../pendencias/'} button key={'Pendencias'}>
+                <ListItemIcon>  <Icon type="reconciliation" /> </ListItemIcon>
+                <ListItemText primary={'Pendências'} />     
+            </ListItem> : ''}
+            
+            <ListItem button key={'Logout'} onClick={() => this.props.handleLogout() }>
+                    <ListItemIcon>  <Icon type="logout" /> </ListItemIcon>
+                    <ListItemText primary={'Logout'} />                
+             </ListItem>
             <Divider/>          
-          </List>
+          </List> : ''}
           
           
         </Drawer>
@@ -178,4 +189,12 @@ PersistentDrawerLeft.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(PersistentDrawerLeft);
+const mapStateToProps = state => ({
+  login : state.login,
+});
+
+const mapActions = dispatch =>
+  bindActionCreators({ handleLogout }, dispatch);
+
+export default connect(mapStateToProps,
+  mapActions) (withStyles(styles, { withTheme: true })(PersistentDrawerLeft));

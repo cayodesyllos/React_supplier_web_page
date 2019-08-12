@@ -3,6 +3,8 @@ import {Types as FornecedoresTypes} from '../ducks/fornecedores';
 import {Types as EnderecoTypes} from '../ducks/endereco';
 import {Types as BancosTypes} from '../ducks/bancos';
 import {Types as GruposEconomicosTypes} from '../ducks/grupos_economicos';
+import {Types as LoginSupplierTypes} from '../ducks/login';
+import {Types as CreateLoginTypes} from '../ducks/create_login';
 import { addFornecedores} from './fornecedores';
 import { updateFornecedores} from './fornecedores';
 import { getGpFornecedores} from './fornecedores';
@@ -13,6 +15,9 @@ import { getEndereco } from './endereco';
 import { getBancos } from './bancos';
 import { getGruposEconomicos } from './grupos_economicos';
 import { addGruposEconomicos } from './grupos_economicos';
+import { checkLoginSupplier } from './login_supplier';
+import { checkLoginSupplierToken } from './login_supplier';
+import { createLogin } from './create_login'
 
 export default function* rootSaga() {
     
@@ -27,6 +32,9 @@ export default function* rootSaga() {
         takeLatest(BancosTypes.GET_REQUEST, getBancos),
         takeLatest(GruposEconomicosTypes.GET_REQUEST, getGruposEconomicos),
         takeLatest(GruposEconomicosTypes.ADD_REQUEST, addGruposEconomicos),
+        takeLatest(LoginSupplierTypes.POST_REQUEST, checkLoginSupplier),
+        takeLatest(LoginSupplierTypes.POST_REQUEST_TOKEN, checkLoginSupplierToken),
+        takeLatest(CreateLoginTypes.ADD_REQUEST, createLogin),
     ]);
     
 }
