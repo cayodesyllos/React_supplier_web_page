@@ -15,9 +15,21 @@ export const Types = {
     GET_APROVED_SUCCESS: 'fornecedores/GET_APROVED_SUCCESS',
     GET_APROVED_FAILURE: 'fornecedores/GET_APROVED_FAILURE',
 
+    GET_REJECTED_REQUEST: 'fornecedores/GET_REJECTED_REQUEST',
+    GET_REJECTED_SUCCESS: 'fornecedores/GET_REJECTED_SUCCESS',
+    GET_REJECTED_FAILURE: 'fornecedores/GET_REJECTED_FAILURE',
+
     UPDATE_REQUEST: 'fornecedores/UPDATE_REQUEST',
     UPDATE_SUCCESS: 'fornecedores/UPDATE_SUCCESS',
     UPDATE_FAILURE: 'fornecedores/UPDATE_FAILURE',
+
+    UPDATE_REJECTION_REQUEST: 'fornecedores/UPDATE_REJECTION_REQUEST',
+    UPDATE_REJECTION_SUCCESS: 'fornecedores/UPDATE_REJECTION_SUCCESS',
+    UPDATE_REJECTION_FAILURE: 'fornecedores/UPDATE_REJECTION_FAILURE',
+
+    UPDATE_REVERT_REJECTION_REQUEST: 'fornecedores/UPDATE_REVERT_REJECTION_REQUEST',
+    UPDATE_REVERT_REJECTION_SUCCESS: 'fornecedores/UPDATE_REVERT_REJECTION_SUCCESS',
+    UPDATE_REVERT_REJECTION_FAILURE: 'fornecedores/UPDATE_REVERT_REJECTION_FAILURE',
 
     DELETE_REQUEST: 'fornecedores/DELETE_REQUEST',
     DELETE_SUCCESS: 'fornecedores/DELETE_SUCCESS',
@@ -41,6 +53,10 @@ const INITIAL_STATE = {
     loading_aproved : true,
     error_aproved : false,
 
+    data_rejected : null,
+    loading_rejected : true,
+    error_rejected : false,
+
     
 };
 
@@ -59,6 +75,20 @@ export default function fornecedores(state = INITIAL_STATE, action){
             return {...state, loading: false, error : 'done'};
         case Types.UPDATE_FAILURE:
             return {...state, loading: false, error : true};
+
+        case Types.UPDATE_REJECTION_REQUEST:
+            return {...state, loading: true, data: action.payload.data};
+        case Types.UPDATE_REJECTION_SUCCESS:
+            return {...state, loading: false, error : false};
+        case Types.UPDATE_REJECTION_FAILURE:
+            return {...state, loading: false, error : true};     
+            
+        case Types.UPDATE_REVERT_REJECTION_REQUEST:
+            return {...state, loading: true, data: action.payload.data};
+        case Types.UPDATE_REVERT_REJECTION_SUCCESS:
+            return {...state, loading: false, error : false};
+        case Types.UPDATE_REVERT_REJECTION_FAILURE:
+            return {...state, loading: false, error : true}; 
 
         case Types.GET_GP_REQUEST:
             return {...state, loading_gp: true};
@@ -81,6 +111,13 @@ export default function fornecedores(state = INITIAL_STATE, action){
         case Types.GET_APROVED_FAILURE:
             return {...state, loading_aproved: false, error_aproved : true};
 
+        case Types.GET_REJECTED_REQUEST:
+            return {...state, loading_rejected: true};
+        case Types.GET_REJECTED_SUCCESS:
+            return {...state, loading_rejected: false, error_rejected : false, data_rejected: action.payload.data};
+        case Types.GET_REJECTED_FAILURE:
+            return {...state, loading_rejected: false, error_rejected : true};
+
         case Types.DELETE_REQUEST:
             return {...state, loading: true, data: action.payload.data};
         case Types.DELETE_SUCCESS:
@@ -102,6 +139,14 @@ export const Creators = {
     updateFornecedoresSuccess : () => ({type: Types.UPDATE_SUCCESS}),
     updateFornecedoresFailure : () => ({type: Types.UPDATE_FAILURE}),
 
+    updateRejectionFornecedoresRequest : (data) => ({type : Types.UPDATE_REJECTION_REQUEST, payload: {data}}),
+    updateRejectionFornecedoresSuccess : () => ({type: Types.UPDATE_REJECTION_SUCCESS}),
+    updateRejectionFornecedoresFailure : () => ({type: Types.UPDATE_REJECTION_FAILURE}),
+
+    updateRevertRejectionFornecedoresRequest : (data) => ({type : Types.UPDATE_REVERT_REJECTION_REQUEST, payload: {data}}),
+    updateRevertRejectionFornecedoresSuccess : () => ({type: Types.UPDATE_REVERT_REJECTION_SUCCESS}),
+    updateRevertRejectionFornecedoresFailure : () => ({type: Types.UPDATE_REVERT_REJECTION_FAILURE}),
+
     getGpFornecedoresRequest : () => ({type : Types.GET_GP_REQUEST}),
     getGpFornecedoresSuccess : (data) => ({type: Types.GET_GP_SUCCESS, payload: {data}}),
     getGpFornecedoresFailure : () => ({type: Types.GET_GP_FAILURE}),
@@ -113,6 +158,10 @@ export const Creators = {
     getAprovedFornecedoresRequest : () => ({type : Types.GET_APROVED_REQUEST}),
     getAprovedFornecedoresSuccess : (data) => ({type: Types.GET_APROVED_SUCCESS, payload: {data}}),
     getAprovedFornecedoresFailure : () => ({type: Types.GET_APROVED_FAILURE}),
+
+    getRejectedFornecedoresRequest : () => ({type : Types.GET_REJECTED_REQUEST}),
+    getRejectedFornecedoresSuccess : (data) => ({type: Types.GET_REJECTED_SUCCESS, payload: {data}}),
+    getRejectedFornecedoresFailure : () => ({type: Types.GET_REJECTED_FAILURE}),
 
     deleteFornecedoresRequest : (data) => ({type : Types.DELETE_REQUEST, payload: {data}}),
     deleteFornecedoresSuccess : () => ({type: Types.DELETE_SUCCESS}),

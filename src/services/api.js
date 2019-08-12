@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 else{
     api = axios.create({
-        baseURL : 'http://localhost:3000',
+        baseURL : 'https://back-portal-fornecedores.herokuapp.com',
         
         })
 }

@@ -3,7 +3,7 @@ if (process.env.NODE_ENV === 'development') {
     apiAddress = 'http://localhost:3000'
 }
 else{
-    apiAddress = 'http://localhost:3000'
+    apiAddress = 'https://back-portal-fornecedores.herokuapp.com'
 }
 
 
